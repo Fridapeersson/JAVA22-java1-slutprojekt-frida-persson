@@ -25,6 +25,7 @@ public class Main {
 		
 		JOptionPane.showMessageDialog(null, "Nu kommer kalendern öppnas :)", "Öppna kalender", JOptionPane.WARNING_MESSAGE);
 
+		
 		GUI.guiCalendar();	
 	}
 }
