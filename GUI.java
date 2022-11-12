@@ -19,102 +19,88 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class GUI {
-	
-	
-	static void createAndPlay() {
+
+	static void guiCalendar() {
 		
-	JFrame frame = new JFrame("Kalender");
-	frame.setSize(1100,700);
-	frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-	//bild-icon
-	frame.setIconImage(new ImageIcon("kalender.jpg").getImage());
+		JFrame frame = new JFrame("Kalender");
+		frame.setSize(1100,700);
+		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		//bild-icon
+		frame.setIconImage(new ImageIcon("kalender.jpg").getImage());
 	
-	
-	JPanel container = new JPanel();
-	container.setLayout(new GridLayout());
-	
+		JPanel container = new JPanel();
+		container.setLayout(new GridLayout());
 	
 		//Skriver ut datum och dag för 7 dagar + panel, textArea, textField, button, label
 		for(int i = 1; i <=7; i++) {
-			addGroupsOfComponents(getDate(i) + " \n" + DayOfWeek.of(i), container, i);
+			contentComponents(getDate(i) + DayOfWeek.of(i), container, i);
 		}
-	
-	
 		
-
-	
-	frame.add(container);
-	frame.setVisible(true);
+		frame.add(container);
+		frame.setVisible(true);
 	}
 	
-	private static void addGroupsOfComponents(String text, JPanel container, int x) {
+	private static void contentComponents(String dateAndDay, JPanel contentContainer, int dayNumber) {
 		LineBorder border = new LineBorder(Color.black, 2, false);
 		
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(4, 1, 0, 0));
+		//Skapar en panel med GridLayout med 4 rows som innehåller textArea, label, button & textField 
+		JPanel contentPanel = new JPanel();
+		contentPanel.setLayout(new GridLayout(4, 0, 0, 0));
+		contentPanel.setBorder(border);
 		
+		//textArea som användaren inte kan ändra/ta bort/skriva i
 		JTextArea txtArea = new JTextArea();
 		txtArea.setEditable(false);
-		txtArea.setBorder(border);
-		
-		JLabel label = new JLabel(text);
-		label.setBorder(border);
-		
-		JButton btn = new JButton("Add");
-		
-		JTextField txtField = new JTextField("Add an event");
-		txtField.setBorder(border);
-		
-		
-		//btnListener
-		addButtonListener(btn, label, txtField, txtArea);
-		panel.add(label);
-		panel.add(txtArea);
-		panel.add(txtField);
-		panel.add(btn);
-		
-		
-		//kallar metod chckdate
-		checkDate(x, panel);
 
-		container.add(panel);
+		JLabel dateLabel = new JLabel(dateAndDay);
+		JButton btn = new JButton("Add");
+		JTextField txtField = new JTextField("Add an event");
+		
+		
+		contentPanel.add(dateLabel);
+		contentPanel.add(txtArea);
+		contentPanel.add(txtField);
+		contentPanel.add(btn);
+		
+		addButtonListener(btn, txtField, txtArea);
+		
+		checkDate(dayNumber, contentPanel);
+
+		contentContainer.add(contentPanel);
 	}
-	//btn listener lägga till label,textField, textArea, btn
-	private static void addButtonListener(JButton b, JLabel label, JTextField tf, JTextArea ta) {
-		ActionListener bListener = new ActionListener() {
-			
+	
+	private static void addButtonListener(JButton btnListenerButton, JTextField btnListenerTextField, JTextArea btnListenerTextArea) {
+		ActionListener buttonListener = new ActionListener() {
+			//Vad som ska hända när man trycker på "add"
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Lägger till texten från btnListenerTextField till btnListenerTextArea och hoppar ner en rad
+				btnListenerTextArea.append(btnListenerTextField.getText() + "\n");
 				
-				ta.append(tf.getText() + "\n");
-				tf.setText("");
-				
+				//btnListenerTextField "Add event" blir tom efter man lagt till en händelse
+				btnListenerTextField.setText("");
 			}
 		};
-		b.addActionListener(bListener);
+		//ActionListener läggs till i knappen
+		btnListenerButton.addActionListener(buttonListener);
 	}
-	//Kollar datum och markerar rätt dag
-	public static void checkDate(int x, JPanel panel) {     
+	
+	//Kollar datum och markerar dag
+	public static void checkDate(int dayNumber, JPanel showDate) {    
 		LocalDate now = LocalDate.now();
-        TemporalField fieldISO = WeekFields.of(Locale.FRANCE).dayOfWeek();
-        LocalDate date = now.with(fieldISO, x);
+        TemporalField dayOfWeek = WeekFields.of(Locale.FRANCE).dayOfWeek();
+        LocalDate date = now.with(dayOfWeek, dayNumber);
         		
         if(date.equals(LocalDate.now())){
-        	panel.setBackground(Color.magenta);
+        	showDate.setBackground(Color.magenta);
         }
-		
 	}
 	//Metod datum
-	public static String getDate(int x) {
-        
+	public static String getDate(int dayNumber) {
 		 LocalDate now = LocalDate.now();
-	        TemporalField fieldISO = WeekFields.of(Locale.FRANCE).dayOfWeek();
-	        LocalDate date = now.with(fieldISO, x);
-	        String dateString = date.toString();
-	        return dateString;
+	     TemporalField dayOfWeek = WeekFields.of(Locale.FRANCE).dayOfWeek();
+	     LocalDate date = now.with(dayOfWeek, dayNumber);
+	     String dateString = date.toString();
+	     return dateString;
 	 }
-	
-	
-
 }
-
